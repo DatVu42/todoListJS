@@ -39,9 +39,16 @@ function handleButtonMarkAsDone(
   if (!todo || !btnMarkAsDone || !alertElement || !todoElement) return null;
 
   btnMarkAsDone.addEventListener("click", () => {
-    // change alert
     const currentStatus = todoElement.dataset.status;
     const newStatus = currentStatus === "pending" ? "completed" : "pending";
+
+    // save to local storage
+    const todoList = getTodoList();
+    const index = todoList.findIndex(x => x.id === todo.id);
+    todoList[index].status = newStatus;
+    localStorage.setItem('todo_list', JSON.stringify(todoList));
+
+    // change alert
     const newAlertClass =
       currentStatus === "pending" ? "alert-success" : "alert-secondary";
     alertElement.classList.remove("alert-success", "alert-secondary");
@@ -110,11 +117,11 @@ function getTodoList() {
 }
 
 (() => {
-  //   const todoList = [
-  //     { id: 1, title: "HTML & CSS", status: "pending" },
-  //     { id: 2, title: "JavaScript", status: "completed" },
-  //     { id: 3, title: "ReactJS", status: "pending" },
-  //   ];
+    // const todoList = [
+    //   { id: 1, title: "HTML & CSS", status: "pending" },
+    //   { id: 2, title: "JavaScript", status: "completed" },
+    //   { id: 3, title: "ReactJS", status: "pending" },
+    // ];
   const todoList = getTodoList();
 
   renderTodoList(todoList, "todoList");
