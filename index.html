@@ -20,6 +20,18 @@
   <body>
     <section class="my-4">
       <div class="container">
+        <form id="todoFormId">
+          <div class="mb-3">
+            <label for="todoText" class="form-label">Enter your todo</label>
+            <input required type="text" class="form-control" id="todoText" />
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="my-4">
+      <div class="container">
         <h1>Todo List</h1>
 
         <ul id="todoList"></ul>
@@ -34,11 +46,11 @@
             <p class="todo__title mb-0">TODO TITLE</p>
 
             <div class="todo__actions">
-              <button type="button" class="btn btn-success mark-as-done">
+              <button type="button" class="btn btn-sm btn-success mark-as-done">
                 Finish
               </button>
 
-              <button type="button" class="btn btn-danger remove">
+              <button type="button" class="btn btn-sm btn-danger remove">
                 Remove
               </button>
             </div>

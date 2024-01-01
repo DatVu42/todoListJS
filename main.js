@@ -23,7 +23,7 @@ function handleButtonRemove(btnRemove, todoElement, todo) {
     // save to local storage
     const todoList = getTodoList();
     const newTodoList = todoList.filter((x) => x.id !== todo.id);
-    localStorage.setItem('todo_list', JSON.stringify(newTodoList));
+    localStorage.setItem("todo_list", JSON.stringify(newTodoList));
 
     // apply to DOM
     todoElement.remove();
@@ -44,9 +44,9 @@ function handleButtonMarkAsDone(
 
     // save to local storage
     const todoList = getTodoList();
-    const index = todoList.findIndex(x => x.id === todo.id);
+    const index = todoList.findIndex((x) => x.id === todo.id);
     todoList[index].status = newStatus;
-    localStorage.setItem('todo_list', JSON.stringify(todoList));
+    localStorage.setItem("todo_list", JSON.stringify(todoList));
 
     // change alert
     const newAlertClass =
@@ -111,18 +111,49 @@ function renderTodoList(todoList, ulElementId) {
 function getTodoList() {
   try {
     return JSON.parse(localStorage.getItem("todo_list")) || [];
-  } catch (error) {
+  } catch {
     return [];
   }
 }
 
+function hanleTodoFormSubmit(event) {
+  event.preventDefault();
+  
+  const todoInput = document.getElementById('todoText');
+  if (!todoInput) return;
+
+  const newTodo = {
+    id: Date.now(),
+    title: todoInput.value,
+    status: 'pending'
+  }
+
+  const todoList = getTodoList();
+  todoList.push(newTodo);
+  localStorage.setItem('todo_list', JSON.stringify(todoList));
+
+  const newLiElement = createTodoElement(newTodo);
+  const ulElement = document.getElementById('todoList');
+  if (!ulElement) return;
+  ulElement.appendChild(newLiElement);
+
+  const todoForm = document.getElementById("todoFormId");
+  if (todoForm) todoForm.reset();
+  todoInput.focus();
+}
+  
 (() => {
-    // const todoList = [
-    //   { id: 1, title: "HTML & CSS", status: "pending" },
-    //   { id: 2, title: "JavaScript", status: "completed" },
-    //   { id: 3, title: "ReactJS", status: "pending" },
-    // ];
+  // const todoList = [
+  //   { id: 1, title: "HTML & CSS", status: "pending" },
+  //   { id: 2, title: "JavaScript", status: "completed" },
+  //   { id: 3, title: "ReactJS", status: "pending" },
+  // ];
   const todoList = getTodoList();
 
   renderTodoList(todoList, "todoList");
+
+  const todoForm = document.getElementById("todoFormId");
+  if (todoForm) {
+    todoForm.addEventListener("submit", hanleTodoFormSubmit);
+  }
 })();
