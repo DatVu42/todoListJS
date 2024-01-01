@@ -1,3 +1,7 @@
+
+
+console.log(add(1, 2));
+
 function renderTodoStatus(todo, alertElement, btnMarkAsDone) {
   if (!todo || !alertElement || !btnMarkAsDone) return null;
 
@@ -78,6 +82,7 @@ function createTodoElement(todo) {
   const alertElement = todoElement.querySelector("div.alert");
   const btnMarkAsDone = todoElement.querySelector("button.mark-as-done");
   const btnRemove = todoElement.querySelector("button.remove");
+  const btnEdit = todoElement.querySelector('button.edit');
 
   todoElement.querySelector("p.todo__title").textContent = todo.title;
   todoElement.dataset.status = todo.status;
@@ -91,6 +96,9 @@ function createTodoElement(todo) {
 
   // handle button mark as done
   handleButtonMarkAsDone(todo, btnMarkAsDone, alertElement, todoElement);
+
+  // handle button Edit
+  hanleButtonEdit(todo, btnEdit, todoElement);
 
   return todoElement;
 }
@@ -128,6 +136,8 @@ function hanleTodoFormSubmit(event) {
     status: 'pending'
   }
 
+  
+
   const todoList = getTodoList();
   todoList.push(newTodo);
   localStorage.setItem('todo_list', JSON.stringify(todoList));
@@ -140,6 +150,20 @@ function hanleTodoFormSubmit(event) {
   const todoForm = document.getElementById("todoFormId");
   if (todoForm) todoForm.reset();
   todoInput.focus();
+}
+
+function hanleButtonEdit(todo, btnEdit, todoElement) {
+  btnEdit.addEventListener('click', () => {
+      // const todoText = todoElement.querySelector('p.todo__title').textContent;
+      const todoText = todo.title;
+      if (!todoText) return;
+      const todoForm = document.getElementById("todoFormId");
+      if (!todoForm) return;
+      const todoInput = todoForm.querySelector('#todoText');
+      if (!todoInput) return;
+      todoInput.value = todoText;
+      todoForm.dataset.id = todo.id;
+  })
 }
   
 (() => {
