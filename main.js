@@ -28,7 +28,27 @@ function renderTodoStatus(todo, todoElement) {
 }
 
 function confirmRemove(todo) {
-  return confirm(`Bạn có muốn xóa ${todo.title}?`);
+  if (!todo) return;
+
+  const confirmElement = cloneElement('#confirmRemoveTemplate');
+  if (!confirmElement) return;
+  const modalConfirmRemove = getElement('#modalConfirmRemove');
+  modalConfirmRemove.appendChild(confirmElement);
+
+
+  const btnClose = confirmElement.querySelector('button.close')
+  const btnOK = confirmElement.querySelector('button.ok');
+  const btnCancel = confirmElement.querySelector('button.cancel');
+  if (!btnClose || !btnOK || !btnCancel) return;
+
+  const a = btnOK.addEventListener('click', () => {
+    btnClose.onClick('Close')
+    return true;
+  });
+
+  btnCancel.addEventListener('click', () => {
+    return false;
+  });
 }
 
 function handleButtonRemove(todo, todoElement) {
@@ -40,15 +60,16 @@ function handleButtonRemove(todo, todoElement) {
   btnRemove.addEventListener("click", () => {
     // confirm before remove todo
     const confirm = confirmRemove(todo);
-    if (confirm === false) return;
+    if (confirm === undefined) return;
+    console.log(confirm);
 
     // save to local storage
-    const todoList = getTodoList();
-    const newTodoList = todoList.filter((x) => x.id !== todo.id);
-    localStorage.setItem("todo_list", JSON.stringify(newTodoList));
+    // const todoList = getTodoList();
+    // const newTodoList = todoList.filter((x) => x.id !== todo.id);
+    // localStorage.setItem("todo_list", JSON.stringify(newTodoList));
 
     // apply to DOM
-    todoElement.remove();
+    // todoElement.remove();
   });
 }
 
