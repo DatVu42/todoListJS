@@ -10,6 +10,7 @@ function renderTodoStatus(todo, todoElement) {
 
   const alertElement = todoElement.querySelector('div.alert');
   const btnMarkAsDone = todoElement.querySelector('button.mark-as-done');
+  if (!alertElement || !btnMarkAsDone) return;
 
   // change alert color
   const alertClass =
@@ -26,23 +27,22 @@ function renderTodoStatus(todo, todoElement) {
   btnMarkAsDone.textContent = btnMarkAsDoneContent;
 }
 
-// function handleButtonRemove(todo) {
-//   const btnRemove = getElement('#todoList button.remove');
-//   console.log(btnRemove);
+function handleButtonRemove(todo, todoElement) {
+  if (!todo || !todoElement) return;
 
-//   if (!btnRemove) return;
+  const btnRemove = todoElement.querySelector('button.remove');
+  if (!btnRemove) return;
 
-//   btnRemove.addEventListener("click", () => {
-//     console.log('btnRemove');
-//     // save to local storage
-//     const todoList = getTodoList();
-//     const newTodoList = todoList.filter((x) => x.id !== todo.id);
-//     localStorage.setItem("todo_list", JSON.stringify(newTodoList));
+  btnRemove.addEventListener("click", () => {
+    // save to local storage
+    const todoList = getTodoList();
+    const newTodoList = todoList.filter((x) => x.id !== todo.id);
+    localStorage.setItem("todo_list", JSON.stringify(newTodoList));
 
-//     // apply to DOM
-//     todoElement.remove();
-//   });
-// }
+    // apply to DOM
+    todoElement.remove();
+  });
+}
 
 // function handleButtonMarkAsDone(todo) {
 //   const { btnMarkAsDone, alertElement, todoElement } = getElements();
@@ -99,7 +99,7 @@ function createTodoElement(todo) {
   renderTodoStatus(todo, todoElement);
 
   // handle button remove
-  // handleButtonRemove(todo);
+  handleButtonRemove(todo, todoElement);
 
   // handle button mark as done
   // handleButtonMarkAsDone(todo);
