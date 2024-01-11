@@ -5,14 +5,11 @@ function getElement(selector) {
   return document.querySelector(selector);
 }
 
-function renderTodoStatus(todo) {
-  // const { alertElement, btnMarkAsDone } = getElements();
+function renderTodoStatus(todo, todoElement) {
+  if (!todo || !todoElement) return;
 
-  if (!todo) return;
-
-  const alertElement = getElement('.alert');
-  const btnMarkAsDone = getElement('#todoList button.mark-as-done');
-  console.log(alertElement, btnMarkAsDone);
+  const alertElement = todoElement.querySelector('div.alert');
+  const btnMarkAsDone = todoElement.querySelector('button.mark-as-done');
 
   // change alert color
   const alertClass =
@@ -81,12 +78,17 @@ function renderTodoStatus(todo) {
 //   });
 // }
 
+function cloneTodo() {
+  const todoTemplate = getElement('#todoTemplate');
+  if (!todoTemplate) return;
+
+  return todoTemplate.content.firstElementChild.cloneNode(true);
+}
+
 function createTodoElement(todo) {
   if (!todo) return;
 
-  const todoTemplate = getElement('#todoTemplate');
-  if (!todoTemplate) return;
-  const todoElement = todoTemplate.content.firstElementChild.cloneNode(true);
+  const todoElement = cloneTodo();
   if (!todoElement) return;
 
   todoElement.querySelector("p.todo__title").textContent = todo.title;
@@ -94,7 +96,7 @@ function createTodoElement(todo) {
   todoElement.dataset.id = todo.id;
 
   // render todo status
-  renderTodoStatus(todo);
+  renderTodoStatus(todo, todoElement);
 
   // handle button remove
   // handleButtonRemove(todo);
