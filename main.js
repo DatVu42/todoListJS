@@ -27,6 +27,10 @@ function renderTodoStatus(todo, todoElement) {
   btnMarkAsDone.textContent = btnMarkAsDoneContent;
 }
 
+function confirmRemove(todo) {
+  return confirm(`Bạn có muốn xóa ${todo.title}?`);
+}
+
 function handleButtonRemove(todo, todoElement) {
   if (!todo || !todoElement) return;
 
@@ -34,6 +38,10 @@ function handleButtonRemove(todo, todoElement) {
   if (!btnRemove) return;
 
   btnRemove.addEventListener("click", () => {
+    // confirm before remove todo
+    const confirm = confirmRemove(todo);
+    if (confirm === false) return;
+
     // save to local storage
     const todoList = getTodoList();
     const newTodoList = todoList.filter((x) => x.id !== todo.id);
@@ -78,17 +86,17 @@ function handleButtonRemove(todo, todoElement) {
 //   });
 // }
 
-function cloneTodo() {
-  const todoTemplate = getElement('#todoTemplate');
-  if (!todoTemplate) return;
+function cloneElement(elementId) {
+  const elementTemplate = getElement(elementId);
+  if (!elementTemplate) return;
 
-  return todoTemplate.content.firstElementChild.cloneNode(true);
+  return elementTemplate.content.firstElementChild.cloneNode(true);
 }
 
 function createTodoElement(todo) {
   if (!todo) return;
 
-  const todoElement = cloneTodo();
+  const todoElement = cloneElement('#todoTemplate');
   if (!todoElement) return;
 
   todoElement.querySelector("p.todo__title").textContent = todo.title;
