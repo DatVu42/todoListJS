@@ -92,6 +92,23 @@ function cloneElement(elementId) {
   return elementTemplate.content.firstElementChild.cloneNode(true);
 }
 
+function handleButtonEdit(todoElement) {
+  if (!todoElement) return;
+
+  const btnEdit = todoElement.querySelector('button.edit');
+  const todoForm = getElement('#todoFormId');
+  if (!btnEdit || !todoForm) return;
+
+  btnEdit.onclick = function () {
+    const todoInput = getElement('#todoText');
+    const todoTitle = todoElement.querySelector('p.todo__title');
+    if (!todoInput || !todoTitle) return;
+
+    todoInput.value = todoTitle.textContent;
+    todoForm.dataset.id = todoElement.dataset.id;
+  }
+}
+
 function createTodoElement(todo) {
   if (!todo) return;
 
@@ -113,6 +130,9 @@ function createTodoElement(todo) {
 
   // handle button Mark as done
   handleButtonMarkAsDone(todo, todoElement, alertElement);
+
+  // handle button Edit
+  handleButtonEdit(todoElement);
 
   return todoElement;
 }
@@ -138,31 +158,43 @@ function getTodoList() {
   }
 }
 
-// function handleTodoFormSubmit(event) {
-//   event.preventDefault();
+function handleTodoFormSubmit(event) {
+  event.preventDefault();
 
-//   const todoInput = document.getElementById('todoText');
-//   if (!todoInput) return;
+  const todoInput = getElement('#todoText');
+  const todoForm = getElement('#todoFormId');
+  const ulElement = getElement('#todoList');
+  if (!todoInput || !todoForm || !ulElement) return;
 
-//   const newTodo = {
-//     id: Date.now(),
-//     title: todoInput.value,
-//     status: 'pending'
-//   }
+  const todoList = getTodoList();
 
-//   const todoList = getTodoList();
-//   todoList.push(newTodo);
-//   localStorage.setItem('todo_list', JSON.stringify(todoList));
+  const isEdit = Boolean(todoForm.dataset.id);
 
-//   const newLiElement = createTodoElement(newTodo);
-//   const ulElement = document.getElementById('todoList');
-//   if (!ulElement) return;
-//   ulElement.appendChild(newLiElement);
+  if (isEdit) {
+    const editLiElement = ulElement.querySelector(`li[data-id="${todoForm.dataset.id}"]`);
+    editLiElement.querySelector('p.todo__title').textContent = todoInput.value;
 
-//   const todoForm = document.getElementById('todoFormId');
-//   todoForm.reset();
-//   todoInput.focus();
-// }
+    const index = todoList.findIndex(x => x.id.toString() === todoForm.dataset.id);
+    if (index >= 0) todoList[index].title = todoInput.value;
+    localStorage.setItem('todo_list', JSON.stringify(todoList));
+  } else {
+    const newTodo = {
+      id: Date.now(),
+      title: todoInput.value,
+      status: 'pending'
+    }
+
+    todoList.push(newTodo);
+    localStorage.setItem('todo_list', JSON.stringify(todoList));
+
+    const newLiElement = createTodoElement(newTodo);
+    if (ulElement) ulElement.appendChild(newLiElement);
+  }
+
+  todoForm.reset();
+  delete todoForm.dataset.id;
+  todoInput.focus();
+}
 
 (() => {
   // const todoList = [
@@ -174,9 +206,9 @@ function getTodoList() {
 
   renderTodoList(todoList, "todoList");
 
-  // const { todoForm } = getElements();
+  const todoForm = getElement('#todoFormId');
 
-  // if (todoForm) {
-  //   todoForm.addEventListener("submit", handleTodoFormSubmit);
-  // }
+  if (todoForm) {
+    todoForm.addEventListener("submit", handleTodoFormSubmit);
+  }
 })();
