@@ -51,39 +51,39 @@ function handleButtonRemove(todo, todoElement) {
   }
 }
 
-// function handleButtonMarkAsDone(todo) {
-//   const { btnMarkAsDone, alertElement, todoElement } = getElements();
+function handleButtonMarkAsDone(todo, todoElement, alertElement) {
+  if (!todo || !alertElement || !todoElement) return;
 
-//   if (!todo || !btnMarkAsDone || !alertElement || !todoElement) return null;
+  const btnMarkAsDone = todoElement.querySelector('button.mark-as-done');
 
-//   btnMarkAsDone.addEventListener("click", () => {
-//     const currentStatus = todoElement.dataset.status;
-//     const newStatus = currentStatus === "pending" ? "completed" : "pending";
+  btnMarkAsDone.addEventListener("click", () => {
+    const currentStatus = todoElement.dataset.status;
+    const newStatus = currentStatus === "pending" ? "completed" : "pending";
 
-//     // save to local storage
-//     const todoList = getTodoList();
-//     const index = todoList.findIndex((x) => x.id === todo.id);
-//     todoList[index].status = newStatus;
-//     localStorage.setItem("todo_list", JSON.stringify(todoList));
+    // save to local storage
+    const todoList = getTodoList();
+    const index = todoList.findIndex((x) => x.id === todo.id);
+    todoList[index].status = newStatus;
+    localStorage.setItem("todo_list", JSON.stringify(todoList));
 
-//     // change alert
-//     const newAlertClass =
-//       currentStatus === "pending" ? "alert-success" : "alert-secondary";
-//     alertElement.classList.remove("alert-success", "alert-secondary");
-//     alertElement.classList.add(newAlertClass);
-//     todoElement.dataset.status = newStatus;
+    // change alert class
+    const newAlertClass =
+      currentStatus === "pending" ? "alert-success" : "alert-secondary";
+    alertElement.classList.remove("alert-success", "alert-secondary");
+    alertElement.classList.add(newAlertClass);
+    todoElement.dataset.status = newStatus;
 
-//     // change button color and content
-//     const newBtnMarkAsDoneStyle =
-//       currentStatus === "pending" ? "btn-success" : "btn-dark";
-//     btnMarkAsDone.classList.remove("btn-success", "btn-dark");
-//     btnMarkAsDone.classList.add(newBtnMarkAsDoneStyle);
+    // change button color and content
+    const newBtnMarkAsDoneStyle =
+      currentStatus === "pending" ? "btn-success" : "btn-dark";
+    btnMarkAsDone.classList.remove("btn-success", "btn-dark");
+    btnMarkAsDone.classList.add(newBtnMarkAsDoneStyle);
 
-//     const newBtnMarkAsDoneContent =
-//       currentStatus === "pending" ? "Reset" : "Finish";
-//     btnMarkAsDone.textContent = newBtnMarkAsDoneContent;
-//   });
-// }
+    const newBtnMarkAsDoneContent =
+      currentStatus === "pending" ? "Reset" : "Finish";
+    btnMarkAsDone.textContent = newBtnMarkAsDoneContent;
+  });
+}
 
 function cloneElement(elementId) {
   const elementTemplate = getElement(elementId);
@@ -98,6 +98,9 @@ function createTodoElement(todo) {
   const todoElement = cloneElement('#todoTemplate');
   if (!todoElement) return;
 
+  const alertElement = todoElement.querySelector('div.alert');
+  if (!alertElement) return;
+
   todoElement.querySelector("p.todo__title").textContent = todo.title;
   todoElement.dataset.status = todo.status;
   todoElement.dataset.id = todo.id;
@@ -108,8 +111,8 @@ function createTodoElement(todo) {
   // handle button remove
   handleButtonRemove(todo, todoElement);
 
-  // handle button mark as done
-  // handleButtonMarkAsDone(todo);
+  // handle button Mark as done
+  handleButtonMarkAsDone(todo, todoElement, alertElement);
 
   return todoElement;
 }
