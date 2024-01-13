@@ -33,22 +33,22 @@ function handleButtonRemove(todo, todoElement) {
   const btnRemove = todoElement.querySelector('button.remove');
   if (!btnRemove) return;
 
-  btnRemove.addEventListener("click", () => {
+  btnRemove.onclick = function () {
     // confirm before remove todo
     const confirmRemoveModal = getElement('#confirmRemoveModal');
     const btnConfirmRemove = confirmRemoveModal.querySelector('button.confirm');
-    confirmRemoveModal.querySelector('div.modal-body').textContent = `Do you want to delete ${todo.title}?`;
-  
-    btnConfirmRemove.addEventListener('click', () => {
+    confirmRemoveModal.querySelector('div.modal-body').textContent = `Do you want to delete "${todo.title}"?`;
+
+    btnConfirmRemove.onclick = function () {
       // save to local storage
       const todoList = getTodoList();
       const newTodoList = todoList.filter((x) => x.id !== todo.id);
       localStorage.setItem("todo_list", JSON.stringify(newTodoList));
-  
+
       // apply to DOM
       todoElement.remove();
-    })
-  });
+    };
+  }
 }
 
 // function handleButtonMarkAsDone(todo) {
