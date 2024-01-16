@@ -1,8 +1,20 @@
 
+function saveToLocalStorage(key, value) {
+  return localStorage.setItem(key, JSON.stringify(value));
+}
+
 function getElement(selector) {
   if (!selector) return;
 
   return document.querySelector(selector);
+}
+
+function getTodoList() {
+  try {
+    return JSON.parse(localStorage.getItem("todo_list")) || [];
+  } catch {
+    return [];
+  }
 }
 
 function renderTodoStatus(todo, todoElement) {
@@ -43,7 +55,7 @@ function handleButtonRemove(todo, todoElement) {
       // save to local storage
       const todoList = getTodoList();
       const newTodoList = todoList.filter((x) => x.id !== todo.id);
-      localStorage.setItem("todo_list", JSON.stringify(newTodoList));
+      saveToLocalStorage('todo_list', newTodoList);
 
       // apply to DOM
       todoElement.remove();
@@ -55,8 +67,9 @@ function handleButtonMarkAsDone(todo, todoElement, alertElement) {
   if (!todo || !alertElement || !todoElement) return;
 
   const btnMarkAsDone = todoElement.querySelector('button.mark-as-done');
+  if (!btnMarkAsDone) return;
 
-  btnMarkAsDone.addEventListener("click", () => {
+  btnMarkAsDone.onclick = function () {
     const currentStatus = todoElement.dataset.status;
     const newStatus = currentStatus === "pending" ? "completed" : "pending";
 
@@ -64,7 +77,7 @@ function handleButtonMarkAsDone(todo, todoElement, alertElement) {
     const todoList = getTodoList();
     const index = todoList.findIndex((x) => x.id === todo.id);
     todoList[index].status = newStatus;
-    localStorage.setItem("todo_list", JSON.stringify(todoList));
+    saveToLocalStorage('todo_list', todoList);
 
     // change alert class
     const newAlertClass =
@@ -82,7 +95,7 @@ function handleButtonMarkAsDone(todo, todoElement, alertElement) {
     const newBtnMarkAsDoneContent =
       currentStatus === "pending" ? "Reset" : "Finish";
     btnMarkAsDone.textContent = newBtnMarkAsDoneContent;
-  });
+  };
 }
 
 function cloneElement(elementId) {
@@ -102,10 +115,14 @@ function handleButtonEdit(todoElement) {
   btnEdit.onclick = function () {
     const todoInput = getElement('#todoText');
     const todoTitle = todoElement.querySelector('p.todo__title');
-    if (!todoInput || !todoTitle) return;
+    const todoCheck = getElement('#todoCheck');
+    if (!todoInput || !todoTitle || !todoCheck) return;
 
     todoInput.value = todoTitle.textContent;
     todoForm.dataset.id = todoElement.dataset.id;
+
+    // change todo check status
+    todoCheck.checked = todoElement.querySelector('.alert').classList.contains('alert-success');
   }
 }
 
@@ -150,42 +167,56 @@ function renderTodoList(todoList, ulElementId) {
   }
 }
 
-function getTodoList() {
-  try {
-    return JSON.parse(localStorage.getItem("todo_list")) || [];
-  } catch {
-    return [];
-  }
-}
-
 function handleTodoFormSubmit(event) {
   event.preventDefault();
 
   const todoInput = getElement('#todoText');
   const todoForm = getElement('#todoFormId');
   const ulElement = getElement('#todoList');
-  if (!todoInput || !todoForm || !ulElement) return;
-
   const todoList = getTodoList();
+  if (!todoInput || !todoForm || !ulElement || !todoList) return;
 
   const isEdit = Boolean(todoForm.dataset.id);
+  const isChecked = getElement('#todoCheck').checked;
+  const newStatus = isChecked ? 'completed' : 'pending';
 
   if (isEdit) {
+    // save to local storage
+    const index = todoList.findIndex(x => x.id.toString() === todoForm.dataset.id);
+    if (index >= 0) {
+      todoList[index].title = todoInput.value;
+      todoList[index].status = newStatus;
+    }
+    saveToLocalStorage('todo_list', todoList);
+
+    // apply to DOM
     const editLiElement = ulElement.querySelector(`li[data-id="${todoForm.dataset.id}"]`);
+    if (!editLiElement) return;
+
     editLiElement.querySelector('p.todo__title').textContent = todoInput.value;
 
-    const index = todoList.findIndex(x => x.id.toString() === todoForm.dataset.id);
-    if (index >= 0) todoList[index].title = todoInput.value;
-    localStorage.setItem('todo_list', JSON.stringify(todoList));
+    const alertElement = editLiElement.querySelector('.alert');
+    if (!alertElement) return;
+    const alertClass = isChecked ? 'alert-success' : 'alert-secondary';
+    alertElement.classList.remove('alert-success', 'alert-secondary');
+    alertElement.classList.add(alertClass);
+
+    const btnMarkAsDone = editLiElement.querySelector('button.mark-as-done');
+    if (!btnMarkAsDone) return;
+    const btnMarkAsDoneClass = isChecked ? 'btn-success' : 'btn-dark';
+    btnMarkAsDone.classList.remove('btn-success', 'btn-dark');
+    btnMarkAsDone.classList.add(btnMarkAsDoneClass);
+    const btnMarkAsDoneContent = isChecked ? 'Reset' : 'Finish';
+    btnMarkAsDone.textContent = btnMarkAsDoneContent;
   } else {
     const newTodo = {
       id: Date.now(),
       title: todoInput.value,
-      status: 'pending'
+      status: newStatus
     }
 
     todoList.push(newTodo);
-    localStorage.setItem('todo_list', JSON.stringify(todoList));
+    saveToLocalStorage('todo_list', todoList);
 
     const newLiElement = createTodoElement(newTodo);
     if (ulElement) ulElement.appendChild(newLiElement);
