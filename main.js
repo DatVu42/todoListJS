@@ -208,6 +208,9 @@ function handleTodoFormSubmit(event) {
     btnMarkAsDone.classList.add(btnMarkAsDoneClass);
     const btnMarkAsDoneContent = isChecked ? 'Reset' : 'Finish';
     btnMarkAsDone.textContent = btnMarkAsDoneContent;
+
+    // update todo element status
+    editLiElement.dataset.status = todoList[index].status;
   } else {
     const newTodo = {
       id: Date.now(),
