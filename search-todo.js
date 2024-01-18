@@ -2,15 +2,24 @@ function getElement(selector) {
   return document.querySelector(selector);
 }
 
+function getAllElements(selector) {
+  return document.querySelectorAll(selector);
+}
+
 function isMatch(todoElement, searchTerm) {
+  if (!todoElement) return false;
+  if (searchTerm === '') return true;
+
   const titleElement = todoElement.querySelector('p.todo__title');
-    
+  if (!titleElement) return false;
+
   return titleElement.textContent.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase());
 }
 
 function searchTodo(searchTerm) {
-  const todoElementList = document.querySelectorAll('#todoList > li');
-  
+  const todoElementList = getAllElements('#todoList > li');
+  if (!todoElementList) return;
+
   for (const todoElement of todoElementList) {
     const isShow = isMatch(todoElement, searchTerm);
 
@@ -20,34 +29,31 @@ function searchTodo(searchTerm) {
 
 function initSearchInput() {
   const searchInput = getElement('#searchTerm');
+  if (!searchInput) return;
 
   searchInput.addEventListener("input", () => {
     searchTodo(searchInput.value);
   });
 }
 
-function isMatchStatus(todoElement, status) {
-  if (status === 'all' || todoElement.dataset.status === status) return true;
-}
-
 function filterTodo(status) {
-  const todoElementList = document.querySelectorAll('#todoList > li');
+  const todoElementList = getAllElements('#todoList > li');
   if (!todoElementList) return;
 
   for (const todoElement of todoElementList) {
-    const isShow = isMatchStatus(todoElement, status);
+    const isShow = status === 'all' || todoElement.dataset.status === status;
 
     todoElement.hidden = !isShow;
   }
 }
 
 function initFilterStatus() {
-  const filterElement = getElement('#filterStatus');
-  if (!filterElement) return;
+  const filterStatusSelect = getElement('#filterStatus');
+  if (!filterStatusSelect) return;
 
-  filterElement.addEventListener('change', () => {{
-    filterTodo(filterElement.value);
-  }})
+  filterStatusSelect.addEventListener('change', () => {
+    filterTodo(filterStatusSelect.value);
+  })
 }
 
 // MAIN
