@@ -43,6 +43,7 @@
       <div class="container">
         <h1>Todo List</h1>
 
+        <!-- search input -->
         <div class="input-group my-3">
           <span class="input-group-text" id="searchTermSpan">Search</span>
           <input
@@ -52,6 +53,13 @@
             aria-describedby="searchTermSpan"
           />
         </div>
+
+        <!-- filter -->
+        <select id="filterStatus" class="form-select mb-3">
+          <option selected value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+        </select>
 
         <ul id="todoList"></ul>
       </div>

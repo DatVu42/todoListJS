@@ -26,7 +26,32 @@ function initSearchInput() {
   });
 }
 
+function isMatchStatus(todoElement, status) {
+  if (status === 'all' || todoElement.dataset.status === status) return true;
+}
+
+function filterTodo(status) {
+  const todoElementList = document.querySelectorAll('#todoList > li');
+  if (!todoElementList) return;
+
+  for (const todoElement of todoElementList) {
+    const isShow = isMatchStatus(todoElement, status);
+
+    todoElement.hidden = !isShow;
+  }
+}
+
+function initFilterStatus() {
+  const filterElement = getElement('#filterStatus');
+  if (!filterElement) return;
+
+  filterElement.addEventListener('change', () => {{
+    filterTodo(filterElement.value);
+  }})
+}
+
 // MAIN
 (() => {
   initSearchInput();
+  initFilterStatus();
 })();
