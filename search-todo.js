@@ -6,7 +6,7 @@ function getAllElements(selector) {
   return document.querySelectorAll(selector);
 }
 
-function isMatch(todoElement, searchTerm) {
+function isMatchSearch(todoElement, searchTerm) {
   if (!todoElement) return false;
   if (searchTerm === '') return true;
 
@@ -21,7 +21,7 @@ function searchTodo(searchTerm) {
   if (!todoElementList) return;
 
   for (const todoElement of todoElementList) {
-    const isShow = isMatch(todoElement, searchTerm);
+    const isShow = isMatchSearch(todoElement, searchTerm);
 
     todoElement.hidden = !isShow;
   }
@@ -36,12 +36,16 @@ function initSearchInput() {
   });
 }
 
+function isMatchStatus(todoElement, status) {
+  return status === 'all' || todoElement.dataset.status === status;
+}
+
 function filterTodo(status) {
   const todoElementList = getAllElements('#todoList > li');
   if (!todoElementList) return;
 
   for (const todoElement of todoElementList) {
-    const isShow = status === 'all' || todoElement.dataset.status === status;
+    const isShow = isMatchStatus(todoElement, status);
 
     todoElement.hidden = !isShow;
   }
