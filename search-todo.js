@@ -16,23 +16,12 @@ function isMatchSearch(todoElement, searchTerm) {
   return titleElement.textContent.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase());
 }
 
-function searchTodo(searchTerm) {
-  const todoElementList = getAllElements('#todoList > li');
-  if (!todoElementList) return;
-
-  for (const todoElement of todoElementList) {
-    const isShow = isMatchSearch(todoElement, searchTerm);
-
-    todoElement.hidden = !isShow;
-  }
-}
-
 function initSearchInput() {
   const searchInput = getElement('#searchTerm');
   if (!searchInput) return;
 
   searchInput.addEventListener("input", () => {
-    searchTodo(searchInput.value);
+    handleFilterChange('searchTerm', searchInput.value)
   });
 }
 
@@ -40,24 +29,35 @@ function isMatchStatus(todoElement, status) {
   return status === 'all' || todoElement.dataset.status === status;
 }
 
-function filterTodo(status) {
-  const todoElementList = getAllElements('#todoList > li');
-  if (!todoElementList) return;
-
-  for (const todoElement of todoElementList) {
-    const isShow = isMatchStatus(todoElement, status);
-
-    todoElement.hidden = !isShow;
-  }
-}
-
 function initFilterStatus() {
   const filterStatusSelect = getElement('#filterStatus');
   if (!filterStatusSelect) return;
 
   filterStatusSelect.addEventListener('change', () => {
-    filterTodo(filterStatusSelect.value);
+    handleFilterChange('status', filterStatusSelect.value);
   })
+}
+
+function isMatch(todoElement, params) {
+  return isMatchSearch(todoElement, params.get('searchTerm')) && isMatchStatus(todoElement, params.get('status'));
+}
+
+function handleFilterChange(filterName, filterValue) {
+  // update query params
+  const url = new URL(window.location);
+  url.searchParams.set('searchTerm', '');
+  url.searchParams.set('status', 'all');
+  url.searchParams.set(filterName, filterValue);
+  history.pushState({}, '', url);
+
+  const todoElementList = getAllElements('#todoList > li');
+  if (!todoElementList) return;
+
+  for (const todoElement of todoElementList) {
+    const isShow = isMatch(todoElement, url.searchParams);
+
+    todoElement.hidden = !isShow;
+  }
 }
 
 // MAIN
