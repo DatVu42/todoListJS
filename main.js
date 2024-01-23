@@ -235,6 +235,7 @@ function handleTodoFormSubmit(event) {
   //   { id: 1, title: "HTML & CSS", status: "pending" },
   //   { id: 2, title: "JavaScript", status: "completed" },
   //   { id: 3, title: "ReactJS", status: "pending" },
+  //   { id: 4, title: "NextJS", status: "pending" },
   // ];
   const todoList = getTodoList();
 

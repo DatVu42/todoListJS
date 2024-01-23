@@ -8,49 +8,63 @@ function getAllElements(selector) {
 
 function isMatchSearch(todoElement, searchTerm) {
   if (!todoElement) return false;
-  if (searchTerm === '') return true;
+  if (searchTerm === "") return true;
 
-  const titleElement = todoElement.querySelector('p.todo__title');
+  const titleElement = todoElement.querySelector("p.todo__title");
   if (!titleElement) return false;
 
-  return titleElement.textContent.toLocaleLowerCase().includes(searchTerm.toLocaleLowerCase());
+  return titleElement.textContent
+    .toLocaleLowerCase()
+    .includes(searchTerm.toLocaleLowerCase());
 }
 
 function initSearchInput() {
-  const searchInput = getElement('#searchTerm');
+  const searchInput = getElement("#searchTerm");
   if (!searchInput) return;
 
   searchInput.addEventListener("input", () => {
-    handleFilterChange('searchTerm', searchInput.value)
+    handleFilterChange("searchTerm", searchInput.value);
   });
 }
 
 function isMatchStatus(todoElement, status) {
-  return status === 'all' || todoElement.dataset.status === status;
+  return status === "all" || todoElement.dataset.status === status;
 }
 
 function initFilterStatus() {
-  const filterStatusSelect = getElement('#filterStatus');
+  const filterStatusSelect = getElement("#filterStatus");
   if (!filterStatusSelect) return;
 
-  filterStatusSelect.addEventListener('change', () => {
-    handleFilterChange('status', filterStatusSelect.value);
-  })
+  filterStatusSelect.addEventListener("change", () => {
+    handleFilterChange("status", filterStatusSelect.value);
+  });
 }
 
 function isMatch(todoElement, params) {
-  return isMatchSearch(todoElement, params.get('searchTerm')) && isMatchStatus(todoElement, params.get('status'));
+  return (
+    isMatchSearch(todoElement, params.get("searchTerm")) &&
+    isMatchStatus(todoElement, params.get("status"))
+  );
 }
 
 function handleFilterChange(filterName, filterValue) {
   // update query params
   const url = new URL(window.location);
-  url.searchParams.set('searchTerm', '');
-  url.searchParams.set('status', 'all');
-  url.searchParams.set(filterName, filterValue);
-  history.pushState({}, '', url);
+  
+  const searchInput = getElement("#searchTerm");
+  if (searchInput.value === "") {
+    url.searchParams.set("searchTerm", "");
+  }
 
-  const todoElementList = getAllElements('#todoList > li');
+  const filterStatus = getElement("#filterStatus");
+  if (filterStatus.value === "all") {
+    url.searchParams.set("status", "all");
+  }
+
+  url.searchParams.set(filterName, filterValue);
+  history.pushState({}, "", url);
+
+  const todoElementList = getAllElements("#todoList > li");
   if (!todoElementList) return;
 
   for (const todoElement of todoElementList) {
