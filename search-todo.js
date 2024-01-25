@@ -18,12 +18,17 @@ function isMatchSearch(todoElement, searchTerm) {
     .includes(searchTerm.toLocaleLowerCase());
 }
 
-function initSearchInput() {
+function initSearchInput(params) {
   const searchInput = getElement("#searchTerm");
   if (!searchInput) return;
 
+  if (params.get('searchTerm')) {
+    searchInput.value = params.get('searchTerm');
+  }
+
   searchInput.addEventListener("input", () => {
     handleFilterChange("searchTerm", searchInput.value);
+    console.log(params.get('searchTerm'));
   });
 }
 
@@ -31,9 +36,13 @@ function isMatchStatus(todoElement, status) {
   return status === "all" || todoElement.dataset.status === status;
 }
 
-function initFilterStatus() {
+function initFilterStatus(params) {
   const filterStatusSelect = getElement("#filterStatus");
   if (!filterStatusSelect) return;
+
+  if (params.get('status')) {
+    filterStatusSelect.value = params.get('status');
+  }
 
   filterStatusSelect.addEventListener("change", () => {
     handleFilterChange("status", filterStatusSelect.value);
@@ -50,7 +59,7 @@ function isMatch(todoElement, params) {
 function handleFilterChange(filterName, filterValue) {
   // update query params
   const url = new URL(window.location);
-  
+
   const searchInput = getElement("#searchTerm");
   if (searchInput.value === "") {
     url.searchParams.set("searchTerm", "");
@@ -76,6 +85,8 @@ function handleFilterChange(filterName, filterValue) {
 
 // MAIN
 (() => {
-  initSearchInput();
-  initFilterStatus();
+  const params = new URLSearchParams(location.search);
+
+  initSearchInput(params);
+  initFilterStatus(params);
 })();
