@@ -1,6 +1,6 @@
 function isMatchSearch(todoElement, searchTerm) {
   if (!todoElement) return false;
-  if (searchTerm === "") return true;
+  if (searchTerm === "" || searchTerm === null) return true;
 
   const titleElement = todoElement.querySelector("p.todo__title");
   if (!titleElement) return false;
@@ -11,6 +11,11 @@ function isMatchSearch(todoElement, searchTerm) {
 }
 
 function isMatchStatus(todoElement, status) {
+  console.log(status);
+  if (status === null) {
+    status = 'all';
+  }
+
   return status === "all" || todoElement.dataset.status === status;
 }
 
