@@ -11,7 +11,6 @@ function isMatchSearch(todoElement, searchTerm) {
 }
 
 function isMatchStatus(todoElement, status) {
-  console.log(status);
   if (status === null) {
     status = 'all';
   }

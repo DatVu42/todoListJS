@@ -28,7 +28,6 @@ function initSearchInput(params) {
 
   searchInput.addEventListener("input", () => {
     handleFilterChange("searchTerm", searchInput.value);
-    console.log(params.get('searchTerm'));
   });
 }
 
@@ -50,6 +49,9 @@ function initFilterStatus(params) {
 }
 
 function isMatch(todoElement, params) {
+  // fix when submit form
+  if (!params) return true;
+
   return (
     isMatchSearch(todoElement, params.get("searchTerm")) &&
     isMatchStatus(todoElement, params.get("status"))
